@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📊 Attendance Report</h2>
+
+<p class="text-muted">
+    View student attendance summary by class and subject.
+</p>
+
+
+<!-- =====================================================
+     FILTER
+====================================================== -->
+
+<form method="GET"
+      action="{{ url_for('main.attendance_report') }}">
+
+    <div class="row g-3">
+
+        <!-- CLASS -->
+
+        <div class="col-md-5">
+
+            <label class="form-label">
+                Class
+            </label>
+
+            <select
+                name="class_id"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Select Class
+                </option>
+
+                {% for c in classes %}
+
+                <option
+                    value="{{ c.id }}"
+                    {% if selected_class_id == c.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ c.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SUBJECT -->
+
+        <div class="col-md-5">
+
+            <label class="form-label">
+                Subject
+            </label>
+
+            <select
+                name="subject_id"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                {% for s in subjects %}
+
+                <option
+                    value="{{ s.id }}"
+                    {% if selected_subject_id == s.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ s.code }} - {{ s.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <div class="col-md-2 d-flex align-items-end">
+
+            <button
+                type="submit"
+                class="btn btn-primary w-100"
+            >
+                📊 View
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+<!-- =====================================================
+     REPORT
+====================================================== -->
+
+{% if selected_class_id and selected_subject_id %}
+
+<h4 class="mt-4">
+    👨‍🎓 Student Attendance
+</h4>
+
+
+{% if report %}
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+
+        <tr>
+
+            <th>
+                Roll Number
+            </th>
+
+            <th>
+                Student
+            </th>
+
+            <th>
+                Present
+            </th>
+
+            <th>
+                Absent
+            </th>
+
+            <th>
+                Total
+            </th>
+
+            <th>
+                Percentage
+            </th>
+
+            <th>
+                Status
+            </th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+        {% for r in report %}
+
+        <tr>
+
+            <td>
+                {{ r.student.roll_number }}
+            </td>
+
+            <td>
+                {{ r.student.user.name }}
+            </td>
+
+            <td>
+                {{ r.present }}
+            </td>
+
+            <td>
+                {{ r.absent }}
+            </td>
+
+            <td>
+                {{ r.total }}
+            </td>
+
+            <td>
+
+                <strong>
+                    {{ r.percentage }}%
+                </strong>
+
+            </td>
+
+            <td>
+
+                {% if r.total == 0 %}
+
+                <span class="badge bg-secondary">
+                    No Data
+                </span>
+
+                {% elif r.percentage < 75 %}
+
+                <span class="badge bg-danger">
+                    ⚠️ Below 75%
+                </span>
+
+                {% else %}
+
+                <span class="badge bg-success">
+                    ✅ Good
+                </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+<!-- =====================================================
+     SUMMARY
+====================================================== -->
+
+<div class="alert alert-info mt-3">
+
+    <strong>Attendance Rule:</strong>
+
+    Students below
+    <strong>75%</strong>
+    attendance are marked as
+    <strong>⚠️ Below 75%</strong>.
+
+</div>
+
+
+{% else %}
+
+<div class="alert alert-warning mt-4">
+
+    No students found for this class.
+
+</div>
+
+{% endif %}
+
+{% else %}
+
+<div class="alert alert-info mt-4">
+
+    Select a class and subject to view the attendance report.
+
+</div>
+
+{% endif %}
+
+
+{% endblock %}

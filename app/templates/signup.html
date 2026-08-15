@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4" style="max-width: 600px;">
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <h2 class="text-center mb-4">
+                📝 Create Account
+            </h2>
+
+            <form method="POST">
+
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        class="form-control"
+                        minlength="6"
+                        required
+                    >
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Account Type</label>
+
+                    <select
+                        name="role"
+                        id="role"
+                        class="form-select"
+                        required
+                        onchange="toggleFields()"
+                    >
+                        <option value="student">
+                            Student
+                        </option>
+
+                        <option value="faculty">
+                            Faculty
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Student -->
+                <div
+                    class="mb-3"
+                    id="studentField"
+                >
+                    <label class="form-label">
+                        Class
+                    </label>
+
+                    <select
+                        name="class_id"
+                        class="form-select"
+                    >
+                        <option value="">
+                            Select Class
+                        </option>
+
+                        {% for c in classes %}
+                        <option value="{{ c.id }}">
+                            {{ c.name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <!-- Faculty -->
+                <div
+                    class="mb-3"
+                    id="facultyField"
+                    style="display:none;"
+                >
+                    <label class="form-label">
+                        Department
+                    </label>
+
+                    <select
+                        name="department_id"
+                        class="form-select"
+                    >
+                        <option value="">
+                            Select Department
+                        </option>
+
+                        {% for d in departments %}
+                        <option value="{{ d.id }}">
+                            {{ d.name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+            <div class="text-center mt-3">
+
+                Already have an account?
+
+                <a href="{{ url_for('main.login') }}">
+                    Login
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function toggleFields() {
+
+    const role =
+        document.getElementById("role").value;
+
+    const studentField =
+        document.getElementById("studentField");
+
+    const facultyField =
+        document.getElementById("facultyField");
+
+    if (role === "faculty") {
+
+        studentField.style.display = "none";
+        facultyField.style.display = "block";
+
+    } else {
+
+        studentField.style.display = "block";
+        facultyField.style.display = "none";
+
+    }
+}
+
+</script>
+
+{% endblock %}

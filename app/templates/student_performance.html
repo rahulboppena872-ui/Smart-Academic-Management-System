@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📈 Student Performance</h2>
+
+<p class="text-muted">
+    Enter and manage student examination marks.
+</p>
+
+
+<!-- =====================================================
+     STEP 1 - SELECT CLASS
+====================================================== -->
+
+<form method="GET"
+      action="{{ url_for('main.student_performance') }}">
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+                Class
+            </label>
+
+            <select
+                name="class_id"
+                class="form-select"
+                onchange="this.form.submit()"
+                required
+            >
+
+                <option value="">
+                    Select Class
+                </option>
+
+                {% for c in classes %}
+
+                <option
+                    value="{{ c.id }}"
+                    {% if selected_class_id == c.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ c.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+    </div>
+
+</form>
+
+
+{% if selected_class_id %}
+
+
+<!-- =====================================================
+     STEP 2 - ENTER PERFORMANCE
+====================================================== -->
+
+<form method="POST"
+      action="{{ url_for('main.student_performance') }}"
+      class="mt-4">
+
+    <!-- Keep selected class -->
+
+    <input
+        type="hidden"
+        name="class_id"
+        value="{{ selected_class_id }}"
+    >
+
+
+    <div class="row g-3">
+
+        <!-- SUBJECT -->
+
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Subject
+            </label>
+
+            <select
+                name="subject_id"
+                class="form-select"
+                required
+            >
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                {% for s in subjects %}
+
+                <option
+                    value="{{ s.id }}"
+                    {% if selected_subject_id == s.id %}
+                        selected
+                    {% endif %}
+                >
+                    {{ s.code }} - {{ s.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- EXAM -->
+
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Exam Name
+            </label>
+
+            <input
+                type="text"
+                name="exam_name"
+                class="form-control"
+                placeholder="Example: Mid 1"
+                value="{{ selected_exam }}"
+                required
+            >
+
+        </div>
+
+
+        <!-- MAX MARKS -->
+
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Maximum Marks
+            </label>
+
+            <input
+                type="number"
+                name="max_marks"
+                class="form-control"
+                value="100"
+                min="1"
+                step="0.5"
+                required
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STUDENT LIST
+    ================================================== -->
+
+    <h4 class="mt-4">
+        👨‍🎓 Students
+    </h4>
+
+
+    {% if students %}
+
+    <div class="table-responsive">
+
+        <table class="table table-striped table-bordered">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Roll Number
+                    </th>
+
+                    <th>
+                        Student Name
+                    </th>
+
+                    <th>
+                        Marks
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for st in students %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ st.roll_number }}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ st.user.name }}
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            name="marks_{{ st.id }}"
+                            class="form-control"
+                            min="0"
+                            step="0.5"
+                            placeholder="Enter marks"
+                        >
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="btn btn-success mt-3"
+    >
+        💾 Save Performance
+    </button>
+
+
+    {% else %}
+
+    <div class="alert alert-warning mt-3">
+        No students found in this class.
+    </div>
+
+    {% endif %}
+
+</form>
+
+
+{% else %}
+
+<div class="alert alert-info mt-4">
+    Select a class to display students.
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     GRADE SCALE
+====================================================== -->
+
+<div class="card mt-4">
+
+    <div class="card-body">
+
+        <h5>
+            🎓 Grade Scale
+        </h5>
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <strong>A+</strong> — 90% and above
+            </div>
+
+            <div class="col-md-3">
+                <strong>A</strong> — 80%–89%
+            </div>
+
+            <div class="col-md-3">
+                <strong>B+</strong> — 70%–79%
+            </div>
+
+            <div class="col-md-3">
+                <strong>B</strong> — 60%–69%
+            </div>
+
+            <div class="col-md-3 mt-2">
+                <strong>C</strong> — 50%–59%
+            </div>
+
+            <div class="col-md-3 mt-2">
+                <strong>D</strong> — 40%–49%
+            </div>
+
+            <div class="col-md-3 mt-2">
+                <strong>F</strong> — Below 40%
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

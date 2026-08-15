@@ -1,0 +1,2 @@
+{% extends "base.html" %}{% block content %}<h2>My Attendance</h2><form method="post" class="mb-4"><button class="btn btn-success" name="status" value="present">Mark Present</button></form>
+<table class="table"><tr><th>Date</th><th>Status</th><th>Time</th></tr>{% for r in records %}<tr><td>{{r.attendance_date}}</td><td>{{r.status}}</td><td>{{r.marked_at or '-'}}</td></tr>{% endfor %}</table>{% endblock %}

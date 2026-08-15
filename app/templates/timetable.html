@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📅 Complete Timetable</h2>
+
+<!-- FILTERS -->
+
+<div class="card p-3 mb-4">
+
+    <h5>🔎 View Timetable</h5>
+
+    <form method="GET"
+          action="{{ url_for('main.admin_timetable') }}">
+
+        <div class="row">
+
+            <!-- DEPARTMENT -->
+
+            <div class="col-md-5">
+
+                <label class="form-label">
+                    Department / Branch
+                </label>
+
+                <select
+                    name="department_id"
+                    class="form-select"
+                    onchange="this.form.submit()">
+
+                    <option value="">
+                        All Departments
+                    </option>
+
+                    {% for d in departments %}
+
+                    <option
+                        value="{{ d.id }}"
+                        {% if selected_department == d.id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ d.code }} — {{ d.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- CLASS -->
+
+            <div class="col-md-5">
+
+                <label class="form-label">
+                    Class / Section
+                </label>
+
+                <select
+                    name="class_id"
+                    class="form-select"
+                    onchange="this.form.submit()">
+
+                    <option value="">
+                        All Classes
+                    </option>
+
+                    {% for c in classes %}
+
+                    {% if not selected_department
+                          or c.department_id == selected_department %}
+
+                    <option
+                        value="{{ c.id }}"
+                        {% if selected_class == c.id %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ c.name }}
+                    </option>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- RESET -->
+
+            <div class="col-md-2 d-flex align-items-end">
+
+                <a
+                    href="{{ url_for('main.admin_timetable') }}"
+                    class="btn btn-secondary w-100">
+
+                    Reset
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- TIMETABLE -->
+
+{% if rows %}
+
+<div class="table-responsive">
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+
+        <tr>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Faculty</th>
+            <th>Room</th>
+            <th>AI</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for t in rows %}
+
+        <tr>
+
+            <td>
+                {{ t.day }}
+            </td>
+
+            <td>
+                {{ t.start_time.strftime('%H:%M') }}
+                –
+                {{ t.end_time.strftime('%H:%M') }}
+            </td>
+
+            <td>
+                {{ t.class_room.name }}
+            </td>
+
+            <td>
+                {{ t.subject.name }}
+            </td>
+
+            <td>
+                {{ t.faculty.user.name }}
+            </td>
+
+            <td>
+                {{ t.room }}
+            </td>
+
+            <td>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('main.analyze', id=t.id) }}">
+
+                    <button
+                        class="btn btn-sm btn-outline-primary">
+
+                        🤖 AI Analyze
+
+                    </button>
+
+                </form>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+{% else %}
+
+<div class="alert alert-info">
+
+    No timetable found for the selected department/class.
+
+</div>
+
+{% endif %}
+
+{% endblock %}

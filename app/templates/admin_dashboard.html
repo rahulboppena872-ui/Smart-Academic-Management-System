@@ -1,0 +1,620 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👨‍💼 Admin / Director Dashboard</h2>
+
+<p>Complete institution control center.</p>
+
+<!-- DASHBOARD COUNTS -->
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Faculty</h5>
+            <h2>{{ faculty_count }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Students</h5>
+            <h2>{{ student_count }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Pending Leaves</h5>
+            <h2>{{ pending_leaves }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>AI Recommendations</h5>
+            <h2>{{ substitutions }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<!-- ADMIN CONTROLS -->
+
+<h4>⚙️ Admin Controls</h4>
+
+<p>
+
+    <a href="{{ url_for('main.admin_timetable') }}"
+       class="btn btn-primary">
+        📅 Timetable
+    </a>
+
+    <a href="{{ url_for('main.admin_leaves') }}"
+       class="btn btn-warning">
+        🏖️ Leave Approvals
+    </a>
+
+    <a href="{{ url_for('main.substitutions') }}"
+       class="btn btn-info">
+        🤖 AI Substitution
+    </a>
+
+    <a href="{{ url_for('main.overview') }}"
+       class="btn btn-secondary">
+        💰 Faculty / Salary
+    </a>
+
+</p>
+
+<hr>
+
+<!-- ===================================================== -->
+<!-- ACADEMIC MANAGEMENT -->
+<!-- ===================================================== -->
+
+<h3>🏢 Academic Management</h3>
+
+<div class="card p-4 mb-4">
+
+    <!-- DEPARTMENT -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <strong>Department / Branch</strong>
+        </label>
+
+        <select
+            id="departmentSelect"
+            class="form-select">
+
+            <option value="">
+                Select Department
+            </option>
+
+            {% for d in departments %}
+
+            <option value="{{ d.id }}">
+                {{ d.code }} — {{ d.name }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <!-- SUBJECT -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <strong>Subject</strong>
+        </label>
+
+        <select
+            id="subjectSelect"
+            class="form-select"
+            disabled>
+
+            <option value="">
+                Select Department First
+            </option>
+
+        </select>
+
+    </div>
+
+    <!-- CLASS -->
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <strong>Class</strong>
+        </label>
+
+        <select
+            id="classSelect"
+            class="form-select">
+
+            <option value="">
+                Select Class
+            </option>
+
+            {% for c in classes %}
+
+            <option
+                value="{{ c.id }}"
+                data-department="{{ c.department_id }}">
+
+                {{ c.name }} -
+                Year {{ c.year }} -
+                Section {{ c.section }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+</div>
+<!-- ===================================================== -->
+<!-- FACULTY SUBJECT ASSIGNMENT -->
+<!-- ===================================================== -->
+
+<hr>
+
+<h3>👨‍🏫 Assign Subjects to Faculty</h3>
+
+<div class="card p-4 mb-4">
+
+    <form method="POST"
+          action="{{ url_for('main.assign_subject') }}">
+
+        <!-- FACULTY -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                <strong>Faculty</strong>
+            </label>
+
+            <select
+                name="faculty_id"
+                class="form-select"
+                required>
+
+                <option value="">
+                    Select Faculty
+                </option>
+
+                {% for f in faculty %}
+
+                <option value="{{ f.id }}">
+                    {{ f.user.name }}
+                    -
+                    {{ f.employee_code }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- DEPARTMENT -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                <strong>Department / Branch</strong>
+            </label>
+
+            <select
+                id="facultyDepartmentSelect"
+                class="form-select"
+                required>
+
+                <option value="">
+                    Select Department
+                </option>
+
+                {% for d in departments %}
+
+                <option value="{{ d.id }}">
+                    {{ d.code }} — {{ d.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SUBJECT -->
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                <strong>Subject</strong>
+            </label>
+
+            <select
+                name="subject_id"
+                id="facultySubjectSelect"
+                class="form-select"
+                disabled
+                required>
+
+                <option value="">
+                    Select Department First
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-success">
+
+            ➕ Assign Subject
+
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- ===================================================== -->
+<!-- MANAGE CLASSES -->
+<!-- ===================================================== -->
+
+<hr>
+
+<h3>📚 Manage Classes</h3>
+
+<form method="POST"
+      action="{{ url_for('main.add_class') }}"
+      class="card p-3 mb-4">
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Class Name
+        </label>
+
+        <input
+            type="text"
+            name="name"
+            class="form-control"
+            placeholder="B.Tech CSE"
+            required>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Year
+        </label>
+
+        <input
+            type="number"
+            name="year"
+            class="form-control"
+            min="1"
+            max="4"
+            placeholder="3"
+            required>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Section
+        </label>
+
+        <input
+            type="text"
+            name="section"
+            class="form-control"
+            placeholder="A"
+            required>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            Department / Branch
+        </label>
+
+        <select
+            name="department_id"
+            class="form-select"
+            required>
+
+            <option value="">
+                Select Department
+            </option>
+
+            {% for d in departments %}
+
+            <option value="{{ d.id }}">
+                {{ d.name }} ({{ d.code }})
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-success">
+
+        ➕ Add Class
+
+    </button>
+
+</form>
+
+
+<!-- ===================================================== -->
+<!-- EXISTING CLASSES -->
+<!-- ===================================================== -->
+
+<h4>Existing Classes</h4>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+            <th>Class</th>
+            <th>Year</th>
+            <th>Section</th>
+            <th>Department</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for c in classes %}
+
+        <tr>
+
+            <td>{{ c.name }}</td>
+
+            <td>{{ c.year }}</td>
+
+            <td>{{ c.section }}</td>
+
+            <td>{{ c.department.name }}</td>
+
+        </tr>
+
+        {% else %}
+
+        <tr>
+
+            <td colspan="4">
+                No classes found.
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+const departments = {
+
+    {% for d in departments %}
+
+    "{{ d.id }}": [
+
+        {% for subject in d.subjects %}
+
+        {
+            id: "{{ subject.id }}",
+            code: "{{ subject.code }}",
+            name: "{{ subject.name }}"
+        }{% if not loop.last %},{% endif %}
+
+        {% endfor %}
+
+    ]{% if not loop.last %},{% endif %}
+
+    {% endfor %}
+
+};
+
+
+const departmentSelect =
+    document.getElementById("departmentSelect");
+
+const subjectSelect =
+    document.getElementById("subjectSelect");
+
+const classSelect =
+    document.getElementById("classSelect");
+
+
+departmentSelect.addEventListener(
+    "change",
+    function () {
+
+        const departmentId = this.value;
+
+        subjectSelect.innerHTML =
+            '<option value="">Select Subject</option>';
+
+        subjectSelect.disabled = true;
+
+
+        /* Reset classes */
+
+        Array.from(
+            classSelect.options
+        ).forEach(function (option) {
+
+            if (option.value) {
+                option.hidden = true;
+            }
+
+        });
+
+        classSelect.value = "";
+
+
+        if (!departmentId) {
+
+            return;
+
+        }
+
+
+        /* Load subjects */
+
+        const subjects =
+            departments[departmentId] || [];
+
+
+        subjects.forEach(function (subject) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = subject.id;
+
+            option.textContent =
+                subject.code +
+                " — " +
+                subject.name;
+
+            subjectSelect.appendChild(option);
+
+        });
+
+
+        if (subjects.length > 0) {
+
+            subjectSelect.disabled = false;
+
+        }
+
+
+        /* Show classes for selected department */
+
+        Array.from(
+            classSelect.options
+        ).forEach(function (option) {
+
+            if (
+                option.value &&
+                option.dataset.department === departmentId
+            ) {
+
+                option.hidden = false;
+
+            }
+
+        });
+
+    }
+
+);
+
+</script>
+<script>
+
+const facultyDepartmentSelect =
+    document.getElementById(
+        "facultyDepartmentSelect"
+    );
+
+const facultySubjectSelect =
+    document.getElementById(
+        "facultySubjectSelect"
+    );
+
+
+facultyDepartmentSelect.addEventListener(
+    "change",
+    function () {
+
+        const departmentId = this.value;
+
+        facultySubjectSelect.innerHTML =
+            '<option value="">Select Subject</option>';
+
+        facultySubjectSelect.disabled = true;
+
+
+        if (!departmentId) {
+            return;
+        }
+
+
+        const subjects =
+            departments[departmentId] || [];
+
+
+        subjects.forEach(function (subject) {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                subject.id;
+
+            option.textContent =
+                subject.code +
+                " — " +
+                subject.name;
+
+            facultySubjectSelect.appendChild(
+                option
+            );
+
+        });
+
+
+        if (subjects.length > 0) {
+
+            facultySubjectSelect.disabled =
+                false;
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

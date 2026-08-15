@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👨‍💼 Admin / Director Dashboard</h2>
+
+<p>Complete institution control center.</p>
+
+<div class="row">
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Faculty</h5>
+            <h2>{{ faculty|length }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Students</h5>
+            <h2>{{ students|length }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card p-3 mb-3">
+            <h5>Pending Leaves</h5>
+            <h2>0</h2>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<h4>Admin Controls</h4>
+
+<p>
+    <a href="{{ url_for('main.admin_timetable') }}"
+       class="btn btn-primary">
+        📅 Timetable
+    </a>
+
+    <a href="{{ url_for('main.admin_leaves') }}"
+       class="btn btn-warning">
+        🏖️ Leave approvals
+    </a>
+
+    <a href="{{ url_for('main.substitutions') }}"
+       class="btn btn-info">
+        🤖 AI substitution
+    </a>
+</p>
+
+<hr>
+
+<h3>📚 Manage Classes</h3>
+
+<form method="POST"
+      action="{{ url_for('main.add_class') }}"
+      class="card p-3 mb-4">
+
+    <div class="mb-3">
+        <label class="form-label">Class Name</label>
+
+        <input
+            type="text"
+            name="name"
+            class="form-control"
+            placeholder="B.Tech CSE"
+            required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Year</label>
+
+        <input
+            type="number"
+            name="year"
+            class="form-control"
+            min="1"
+            max="4"
+            placeholder="3"
+            required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Section</label>
+
+        <input
+            type="text"
+            name="section"
+            class="form-control"
+            placeholder="A"
+            required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Department</label>
+
+        <select
+            name="department_id"
+            class="form-select"
+            required>
+
+            <option value="">
+                Select Department
+            </option>
+
+            {% for d in departments %}
+                <option value="{{ d.id }}">
+                    {{ d.name }} ({{ d.code }})
+                </option>
+            {% endfor %}
+
+        </select>
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-success">
+        ➕ Add Class
+    </button>
+
+</form>
+
+<hr>
+
+<h4>Existing Classes</h4>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Year</th>
+            <th>Section</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for c in classes %}
+
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.year }}</td>
+            <td>{{ c.section }}</td>
+            <td>{{ c.department.name }}</td>
+        </tr>
+
+        {% else %}
+
+        <tr>
+            <td colspan="4">
+                No classes found.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

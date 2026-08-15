@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>👨‍🎓 Student Attendance</h2>
+
+<p class="text-muted">
+    Mark attendance for your students.
+</p>
+
+<form method="get" class="card p-3 mb-4">
+
+    <div class="row g-3">
+
+        <!-- CLASS -->
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Class
+            </label>
+
+            <select name="class_id" class="form-select" required>
+
+                <option value="">
+                    Select Class
+                </option>
+
+                {% for c in classes %}
+
+                <option value="{{ c.id }}"
+                    {% if selected_class_id == c.id %}
+                    selected
+                    {% endif %}
+                >
+                    {{ c.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SUBJECT -->
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Subject
+            </label>
+
+            <select name="subject_id" class="form-select" required>
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                {% for s in subjects %}
+
+                <option value="{{ s.id }}"
+                    {% if selected_subject_id == s.id %}
+                    selected
+                    {% endif %}
+                >
+                    {{ s.code }} - {{ s.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- DATE -->
+        <div class="col-md-4">
+
+            <label class="form-label">
+                Date
+            </label>
+
+            <input
+                type="date"
+                name="attendance_date"
+                class="form-control"
+                value="{{ selected_date or '' }}"
+                required
+            >
+
+        </div>
+
+    </div>
+
+    <button
+        type="submit"
+        class="btn btn-primary mt-3"
+    >
+        🔍 Load Students
+    </button>
+
+</form>
+
+
+<!-- =====================================================
+     STUDENTS
+====================================================== -->
+
+{% if students %}
+
+<form method="post">
+
+    <!-- Keep selected values when saving -->
+    <input
+        type="hidden"
+        name="class_id"
+        value="{{ selected_class_id }}"
+    >
+
+    <input
+        type="hidden"
+        name="subject_id"
+        value="{{ selected_subject_id }}"
+    >
+
+    <input
+        type="hidden"
+        name="attendance_date"
+        value="{{ selected_date }}"
+    >
+
+
+    <div class="card">
+
+        <div class="card-header">
+            <strong>Students in {{ students[0].class_room.name }}</strong>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped">
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Roll Number</th>
+                        <th>Student Name</th>
+                        <th>Attendance</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ student.roll_number }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ student.user.name }}
+                        </td>
+
+                        <td>
+
+                            <div class="form-check form-check-inline">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="status_{{ student.id }}"
+                                    value="present"
+                                    id="present_{{ student.id }}"
+                                    checked
+                                >
+
+                                <label
+                                    class="form-check-label text-success"
+                                    for="present_{{ student.id }}"
+                                >
+                                    Present
+                                </label>
+
+                            </div>
+
+
+                            <div class="form-check form-check-inline">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="status_{{ student.id }}"
+                                    value="absent"
+                                    id="absent_{{ student.id }}"
+                                >
+
+                                <label
+                                    class="form-check-label text-danger"
+                                    for="absent_{{ student.id }}"
+                                >
+                                    Absent
+                                </label>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="submit"
+        class="btn btn-success mt-3"
+    >
+        💾 Save Attendance
+    </button>
+
+</form>
+
+{% else %}
+
+<div class="alert alert-info">
+    Select a class and subject, then click
+    <strong>Load Students</strong>.
+</div>
+
+{% endif %}
+
+{% endblock %}

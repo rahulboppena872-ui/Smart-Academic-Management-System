@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📝 Faculty Notes</h2>
+
+<p>Create study notes for your students.</p>
+
+<div class="card p-4 mb-4">
+
+    <h4>➕ Add Study Note</h4>
+
+    <form method="POST">
+
+        <div class="mb-3">
+            <label class="form-label">Class</label>
+
+            <select name="class_id"
+                    class="form-select"
+                    required>
+
+                <option value="">Select Class</option>
+
+                {% for c in classes %}
+                <option value="{{ c.id }}">
+                    {{ c.name }}
+                    - Year {{ c.year }}
+                    - {{ c.section }}
+                </option>
+                {% endfor %}
+
+            </select>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">
+                Subject
+            </label>
+
+            <select name="subject_id"
+                    class="form-select"
+                    required>
+
+                <option value="">
+                    Select Assigned Subject
+                </option>
+
+                {% for s in subjects %}
+
+                <option value="{{ s.id }}">
+                    {{ s.code }} - {{ s.name }}
+                </option>
+
+                {% else %}
+
+                <option disabled>
+                    No subjects assigned
+                </option>
+
+                {% endfor %}
+
+            </select>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">
+                Note Title
+            </label>
+
+            <input type="text"
+                   name="title"
+                   class="form-control"
+                   placeholder="Example: Machine Learning Unit 1"
+                   required>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">
+                Note Content
+            </label>
+
+            <textarea name="content"
+                      class="form-control"
+                      rows="6"
+                      placeholder="Enter study material..."
+                      required></textarea>
+        </div>
+
+
+        <button type="submit"
+                class="btn btn-primary">
+            📝 Add Note
+        </button>
+
+    </form>
+
+</div>
+
+
+<hr>
+
+
+<h3>📚 My Uploaded Notes</h3>
+
+{% if notes %}
+
+<div class="row">
+
+    {% for note in notes %}
+
+    <div class="col-md-6">
+
+        <div class="card p-3 mb-3">
+
+            <h5>
+                {{ note.title }}
+            </h5>
+
+            <p>
+                {{ note.content }}
+            </p>
+
+            <small class="text-muted">
+
+                Subject:
+                {{ note.subject.code }}
+                -
+                {{ note.subject.name }}
+
+                <br>
+
+                Class:
+                {{ note.class_room.name }}
+
+            </small>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="alert alert-info">
+    No notes uploaded yet.
+</div>
+
+{% endif %}
+
+{% endblock %}
