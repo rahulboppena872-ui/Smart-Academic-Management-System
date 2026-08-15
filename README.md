@@ -56,3 +56,5 @@ Early attendance does not automatically mean emergency leave. Faculty submit eme
 
 ## AI substitution
 The MVP ranks available faculty using subject match, department match, timetable conflict, workload and availability. It is explainable and can later be replaced by a trained ML model.
+@AUTHOR
+RAHUL BOPPENA
