@@ -1,7 +1,13 @@
 # Smart Academic Management System
 
 AI-assisted school/college management for Admin/Director, Faculty and Students.
+# Smart Academic Management System
 
+## 🌐 Live Application
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20Application-success?style=for-the-badge)](https://smart-academic-management-system-production-54e0.up.railway.app/)
+
+👉 **[Click here to open the live application](https://smart-academic-management-system-production-54e0.up.railway.app/)**
 ## Features
 - Role-based login
 - Faculty, students, classes and subjects
